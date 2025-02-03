@@ -6,4 +6,4 @@ obj/
 node_modules/
 .vscode
 .github
-*.venv/
+vote/venv
