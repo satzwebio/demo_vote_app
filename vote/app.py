@@ -1,51 +1,89 @@
 from flask import Flask, render_template, request, make_response, g
-from redis import Redis
 import os
 import socket
-import random
-import json
 import logging
+import uuid
+import psycopg2
+
+
+
+from flask import Blueprint, render_template, request, redirect
+
 
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.INFO)
 
-def get_redis():
-    if not hasattr(g, 'redis'):
-        g.redis = Redis(host="redis", db=0, socket_timeout=5)
-    return g.redis
 
-@app.route("/", methods=['POST','GET'])
-def hello():
-    voter_id = request.cookies.get('voter_id')
-    if not voter_id:
-        voter_id = hex(random.getrandbits(64))[2:-1]
+# DB_CONFIG = {
+#     "dbname": "postgres",
+#     "user": "postgres",
+#     "password": "postgres",
+#      "host": "db",  # Change to 'db' if running in Docker
+#      "port": 5432
+# }
 
-    vote = None
+DB_CONFIG = {
+    "dbname": os.getenv("DB_NAME", "postgres"),
+    "user": os.getenv("DB_USER", "postgres"),
+    "password": os.getenv("DB_PASSWORD", "postgres"),
+    "host": os.getenv("DB_HOST", "db"),
+    "port": os.getenv("DB_PORT", "5432")
+}
 
-    if request.method == 'POST':
-        redis = get_redis()
-        vote = request.form['vote']
-        app.logger.info('Received vote for %s', vote)
-        data = json.dumps({'voter_id': voter_id, 'vote': vote})
-        redis.rpush('votes', data)
+def get_db_connection():
+    return psycopg2.connect(**DB_CONFIG)
 
-    resp = make_response(render_template(
-        'index.html',
-        option_a=option_a,
-        option_b=option_b,
-        hostname=hostname,
-        vote=vote,
-    ))
-    resp.set_cookie('voter_id', voter_id)
-    return resp
+@app.route('/')
+def index():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id, vote FROM votes")
+        votes = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        votes = [("Error connecting to DB", str(e))]
+    return render_template('index.html', votes=votes)
 
+@app.route('/add', methods=['POST'])
+def add_message():
+    vote = request.form.get('vote')
+    if vote:
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            print(f"{vote}")
+            random_id = str(uuid.uuid4())
+            cur.execute("INSERT INTO votes (id,vote) VALUES (%s, %s)", (random_id,vote))
+            conn.commit()
+            cur.close()
+            conn.close()
+        except Exception as e:
+            print(f"Database error: {e}")  # Logs error to the console
+            return f"Database error: {e}", 500  # Returns HTTP 500 error for debugging
+    return redirect('/')
+
+
+@app.route('/delete/<vote_id>', methods=['POST'])
+def delete_vote(vote_id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM votes WHERE id = %s", (vote_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return f"Database error: {e}"
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)

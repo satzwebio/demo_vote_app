@@ -19,15 +19,33 @@ spec:
         name: postgres
         env:
         - name: POSTGRES_USER
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_NAME
+        - name: POSTGRES_LISTEN_ADDRESSES
+          value: "*"
         ports:
         - containerPort: 5432
           name: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
+        - name: db-init-script
+          mountPath: /docker-entrypoint-initdb.d          
       volumes:
       - name: db-data
-        emptyDir: {} 
+        emptyDir: {}
+      - name: db-init-script
+        configMap:
+          name: db-init-script

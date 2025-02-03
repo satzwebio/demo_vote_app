@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-script
+  labels:
+    app: db
+data:
+  init.sql: |
+    CREATE TABLE votes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        vote VARCHAR(255) NOT NULL
+    );

@@ -1,129 +1,102 @@
-@import url(//fonts.googleapis.com/css?family=Open+Sans:400,700,600);
-
-*{
-  box-sizing:border-box;
-}
-html,body{
+/* General Body and Layout */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
   margin: 0;
   padding: 0;
-  background-color: #F7F8F9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  font-family: 'Open Sans';
+  flex-direction: column;
 }
 
-button{
-  border-radius: 0;
-  width: 100%;
-  height: 50%;
+.page-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-button[type="submit"] {
-  -webkit-appearance:none; -webkit-border-radius:0;
+.votes-table-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-top: 30px;
 }
 
-button i{
-  float: right;
-  padding-right: 30px;
-  margin-top: 3px;
+/* Table Styles */
+table.votes-table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-button.a{
-  background-color: #1aaaf8;
-}
-
-button.b{
-  background-color: #00cbca;
-}
-
-#tip{
+table.votes-table th,
+table.votes-table td {
+  padding: 12px;
   text-align: left;
-  color: #c0c9ce;
-  font-size: 14px;
+  border: 1px solid #ddd;
 }
 
-#hostname{
-  position: absolute;
-  bottom: 100px;
-  right: 0;
-  left: 0;
-  color: #8f9ea8;
-  font-size: 24px;
-}
-
-#content-container{
-  z-index: 2;
-  position: relative;
-  margin: 0 auto;
-  display: table;
-  padding: 10px;
-  max-width: 940px;
-  height: 100%;
-}
-#content-container-center{
-  display: table-cell;
-  text-align: center;
-}
-
-#content-container-center h3{
-  color: #254356;
-}
-
-#choice{
-  transition: all 300ms linear;
-  line-height: 1.3em;
-  display: inline;
-  vertical-align: middle;
-  font-size: 3em;
-}
-#choice a{
-  text-decoration:none;
-}
-#choice a:hover, #choice a:focus{
-  outline:0;
-  text-decoration:underline;
-}
-
-#choice button{
-  display: block;
-  height: 80px;
-  width: 330px;
-  border: none;
+table.votes-table th {
+  background-color: #4CAF50;
   color: white;
-  text-transform: uppercase;
-  font-size:18px;
-  font-weight: 700;
-  margin-top: 10px;
+}
+
+table.votes-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table.votes-table tr:hover {
+  background-color: #ddd;
+}
+
+/* Add Vote Form */
+.add-vote-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.vote-input {
+  padding: 10px;
+  font-size: 1rem;
+  width: 300px;
   margin-bottom: 10px;
-  text-align: left;
-  padding-left: 50px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
-#choice button.a:hover{
-  background-color: #1488c6;
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-#choice button.b:hover{
-  background-color: #00a2a1;
+.submit-button:hover {
+  background-color: #45a049;
 }
 
-#choice button.a:focus{
-  background-color: #1488c6;
+/* Delete Button */
+.delete-button {
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-#choice button.b:focus{
-  background-color: #00a2a1;
+.delete-button:hover {
+  background-color: #e53935;
 }
 
-#background-stats{
-  z-index:1;
-  height:100%;
-  width:100%;
-  position:absolute;
-}
-#background-stats div{
-  transition: width 400ms ease-in-out;
-  display:inline-block;
-  margin-bottom:-4px;
-  width:50%;
-  height:100%;
+/* Form Delete Action */
+.delete-form {
+  display: inline;
+  margin: 0;
 }
