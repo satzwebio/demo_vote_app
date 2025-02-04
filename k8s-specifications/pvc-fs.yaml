@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: filesystem-pvc
+  namespace: cohesity-demo
+spec:
+  accessModes:
+    - ReadWriteMany  # Allows multiple pods to access it
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard  # Uses Minikube's default storage class

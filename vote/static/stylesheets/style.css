@@ -1,64 +1,82 @@
-/* General Body and Layout */
+/* General Layout */
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f4f9;
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   flex-direction: column;
+  align-items: center;
 }
 
-.page-title {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 20px;
+/* Tab Navigation */
+.tab-container {
+  display: flex;
+  margin-top: 20px;
 }
 
-.votes-table-title {
-  font-size: 1.8rem;
-  color: #333;
-  margin-top: 30px;
+.tab-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  background-color: #6C757D;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.tab-button.active {
+  background-color: #007BFF;
+  color: white;
+}
+
+/* Hide inactive screens */
+.screen {
+  display: none;
+  width: 80%;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.screen.active {
+  display: block;
 }
 
 /* Table Styles */
-table.votes-table {
-  width: 80%;
+table {
+  width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-table.votes-table th,
-table.votes-table td {
+table th, table td {
   padding: 12px;
   text-align: left;
   border: 1px solid #ddd;
 }
 
-table.votes-table th {
-  background-color: #4CAF50;
+table th {
+  background-color: #007BFF;
   color: white;
 }
 
-table.votes-table tr:nth-child(even) {
+table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-table.votes-table tr:hover {
+table tr:hover {
   background-color: #ddd;
 }
 
-/* Add Vote Form */
-.add-vote-form {
+/* Add color Form */
+.add-color-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
 }
 
-.vote-input {
+.color-input {
   padding: 10px;
   font-size: 1rem;
   width: 300px;
@@ -70,7 +88,7 @@ table.votes-table tr:hover {
 .submit-button {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: #4CAF50;
+  background-color: #28A745;
   color: white;
   border: none;
   border-radius: 5px;
@@ -78,13 +96,13 @@ table.votes-table tr:hover {
 }
 
 .submit-button:hover {
-  background-color: #45a049;
+  background-color: #218838;
 }
 
 /* Delete Button */
 .delete-button {
   padding: 5px 10px;
-  background-color: #f44336;
+  background-color: #DC3545;
   color: white;
   border: none;
   border-radius: 5px;
@@ -92,11 +110,19 @@ table.votes-table tr:hover {
 }
 
 .delete-button:hover {
-  background-color: #e53935;
+  background-color: #C82333;
 }
 
-/* Form Delete Action */
-.delete-form {
-  display: inline;
-  margin: 0;
+/* File Upload Section */
+#upload-section {
+  width: 80%;
+  margin: 20px auto;
+}
+
+#file-upload {
+  margin-bottom: 10px;
+}
+
+.file-label {
+  font-weight: bold;
 }

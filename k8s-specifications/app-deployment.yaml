@@ -2,24 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: vote
-  name: vote
+    app: app
+  name: app
+  namespace: cohesity-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vote
+      app: app
   template:
     metadata:
       labels:
-        app: vote
+        app: app
     spec:
       containers:
-      - image: satzweb/examplevotingapp_vote:v5
-        name: vote
+      - image: satzweb/storageapp:v1
+        name: app
         ports:
         - containerPort: 80
-          name: vote
+          name: app
         env:
         - name: DB_NAME
           valueFrom:
@@ -46,3 +47,10 @@ spec:
             secretKeyRef:
               name: db-secret
               key: POSTGRES_PASSWORD
+        volumeMounts:
+        - mountPath: "/mnt/filesystem-pvc"
+          name: storage-volume
+      volumes:
+      - name: storage-volume
+        persistentVolumeClaim:
+          claimName: filesystem-pvc

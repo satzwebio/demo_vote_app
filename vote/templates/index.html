@@ -2,35 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Votes</title>
+    <title>Storage Demo - Color & File Storage</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
 </head>
 <body>
-    <h1 class="page-title">Votes</h1>
 
-    <form action="/add" method="post" class="add-vote-form">
-        <input type="text" name="vote" placeholder="Enter your vote" class="vote-input">
-        <button type="submit" class="submit-button">Add Vote</button>
-    </form>
+    <!-- Tab Navigation -->
+    <div class="tab-container">
+        <button class="tab-button active" onclick="showScreen('color-screen')">Block Storage</button>
+        <button class="tab-button" onclick="showScreen('files-screen')">File Storage (Files)</button>
+    </div>
 
-    <h2 class="votes-table-title">Votes Table</h2>
-    <table class="votes-table">
-        <tr>
-            <!-- <th>ID</th> -->
-            <th>Vote</th>
-            <th>Action</th>
-        </tr>
-        {% for vote in votes %}
-        <tr>
-            <!-- <td>{{ vote[0] }}</td> -->
-            <td>{{ vote[1] }}</td>
-            <td>
-                <form action="/delete/{{ vote[0] }}" method="post" class="delete-form">
-                    <button type="submit" class="delete-button">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- Color Storage Screen -->
+    <div id="color-screen" class="screen active">
+        <form action="/add" method="post" class="add-color-form">
+            <input type="text" name="color" placeholder="Enter a color name" class="color-input">
+            <button type="submit" class="submit-button">Add</button>
+        </form>
+
+        <table class="colors-table">
+            <tr>
+                <th>Color Name</th>
+                <th>Action</th>
+            </tr>
+            {% for color in colors %}
+            <tr>
+                <td>{{ color[1] }}</td>
+                <td>
+                    <form action="/delete/{{ color[0] }}" method="post">
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- File Storage Screen -->
+    <div id="files-screen" class="screen">
+        <h1 class="page-title">Stored Files</h1>
+
+        <!-- Show PVC Directory -->
+        <p><strong>Storage Directory on Host:</strong> <span class="storage-path">/mnt/filesystem-pvc</span></p>
+
+        <!-- File Upload Section -->
+        <div id="upload-section">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="file-upload" multiple>
+                <button type="submit" class="submit-button">Upload</button>
+            </form>
+        </div>
+
+        <!-- File Table -->
+        <h2 class="files-table-title">Files in PVC</h2>
+        <table class="files-table">
+            <tr>
+                <th>File Name</th>
+                <th>Size (KB)</th>
+                <th>Action</th>
+            </tr>
+            {% for file in files %}
+            <tr>
+                <td>{{ file.name }}</td>
+                <td>{{ file.size }}</td>
+                <td>
+                    <form action="/delete_file/{{ file.name }}" method="post" class="delete-file-form">
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                    <a href="/download/{{ file.name }}" class="download-button">Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected screen
+            document.getElementById(screenId).classList.add('active');
+
+            // Set active button
+            event.target.classList.add('active');
+        }
+    </script>
+
 </body>
 </html>
