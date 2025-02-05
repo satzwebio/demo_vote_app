@@ -16,7 +16,7 @@ spec:
         app: app
     spec:
       containers:
-      - image: satzweb/storageapp:v1
+      - image: satzweb/storageapp:v3
         name: app
         ports:
         - containerPort: 80

@@ -1,0 +1,23 @@
+# Use the latest RHEL Universal Base Image (UBI 9 minimal)
+FROM registry.access.redhat.com/ubi9/python-311:latest AS base
+
+# Set the working directory
+WORKDIR /usr/local/app
+
+# Install required system packages
+RUN microdnf install -y \
+    libpq-devel \
+    && microdnf clean all
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY . .
+
+# Expose port 80
+EXPOSE 80
+
+# Command to run the app with Gunicorn
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]

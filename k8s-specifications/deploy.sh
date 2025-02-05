@@ -27,9 +27,16 @@ kubectl apply -f db-secret.yaml
 kubectl apply -f db-config.yaml
 kubectl apply -f db-init-config.yaml
 
-# Deploy the database and its service
-kubectl apply -f db-deployment.yaml
+# Deploy the StatefulSet and its service
+kubectl apply -f db-statefulset.yaml
 kubectl apply -f db-service.yaml
+
+# Wait for PostgreSQL to be ready
+echo "Waiting for database to initialize..."
+sleep 10
+
+# Run the database initialization job
+kubectl apply -f db-init-job.yaml
 
 # Deploy the application and its service
 kubectl apply -f app-deployment.yaml

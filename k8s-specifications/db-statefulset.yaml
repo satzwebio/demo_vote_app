@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  labels:
-    app: db
   name: db
   namespace: cohesity-demo
+  labels:
+    app: db
 spec:
+  serviceName: db
   replicas: 1
   selector:
     matchLabels:
@@ -16,8 +17,8 @@ spec:
         app: db
     spec:
       containers:
-      - image: postgres:15-alpine
-        name: postgres
+      - name: postgres
+        image: postgres:15-alpine
         env:
         - name: POSTGRES_USER
           valueFrom:
@@ -40,15 +41,10 @@ spec:
         - containerPort: 5432
           name: postgres
         volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: db-data
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
           subPath: postgres  # Ensures only this sub-directory is used inside PVC
-        - name: db-init-config
-          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: db-data
         persistentVolumeClaim:
           claimName: block-storage-pvc  # Using your block storage PVC
-      - name: db-init-config
-        configMap:
-          name: db-init-config

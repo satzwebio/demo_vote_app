@@ -40,8 +40,7 @@
 
     <!-- File Storage Screen -->
     <div id="files-screen" class="screen">
-        <h1 class="page-title">Stored Files</h1>
-
+        
         <!-- Show PVC Directory -->
         <p><strong>Storage Directory on Host:</strong> <span class="storage-path">/mnt/filesystem-pvc</span></p>
 
@@ -69,7 +68,7 @@
                     <form action="/delete_file/{{ file.name }}" method="post" class="delete-file-form">
                         <button type="submit" class="delete-button">Delete</button>
                     </form>
-                    <a href="/download/{{ file.name }}" class="download-button">Download</a>
+                    
                 </td>
             </tr>
             {% endfor %}

@@ -1,16 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: db
   name: db
   namespace: cohesity-demo
+  labels:
+    app: db
 spec:
-  type: ClusterIP
+  clusterIP: None  # Headless service for StatefulSet
   ports:
-  - name: "db-service"
+  - name: db
     port: 5432
     targetPort: 5432
   selector:
     app: db
-  

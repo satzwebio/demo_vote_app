@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-job
+  namespace: cohesity-demo
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            echo "Waiting for PostgreSQL to be ready..."
+            until pg_isready -h db -p 5432 -U "$POSTGRES_USER"; do
+              sleep 5
+            done
+            echo "PostgreSQL is ready! Running init script..."
+            export PGPASSWORD="$POSTGRES_PASSWORD"
+            psql -h db -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /init.sql
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          value: "postgres"
+        volumeMounts:
+        - name: db-init-script
+          mountPath: /init.sql
+          subPath: init.sql
+      volumes:
+      - name: db-init-script
+        configMap:
+          name: db-init-config
