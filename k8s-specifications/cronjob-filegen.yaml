@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-filegen
+  namespace: cohesity-demo
+spec:
+  schedule: "*/1 * * * *"  # Runs every 30 seconds
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          volumes:
+            - name: file-storage
+              persistentVolumeClaim:
+                claimName: filesystem-pvc
+          containers:
+            - name: file-writer
+              image: busybox
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  NODE_NAME=$(cat /etc/hostname)
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  echo "Dummy file created at $TIMESTAMP on $NODE_NAME" > /mnt/filesystem-pvc/${NODE_NAME}-${TIMESTAMP}.txt
+              volumeMounts:
+                - name: file-storage
+                  mountPath: /mnt/filesystem-pvc

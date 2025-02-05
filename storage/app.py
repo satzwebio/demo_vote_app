@@ -1,12 +1,17 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import os
 import uuid
 import psycopg2
 
 app = Flask(__name__, static_folder='static')
 
-# Define upload directory (Mounted PVC path)
-UPLOAD_FOLDER = "/mnt/filesystem-pvc"
+# Define upload directory (dynamically use Git Bash or Windows path)
+if os.name == 'nt':  # Check if it's a Windows system
+    UPLOAD_FOLDER = r"C:\Users\satzw\OneDrive\Desktop\example-voting-app\mnt-filesystem"
+else:
+    UPLOAD_FOLDER = "/mnt/filesystem-pvc"  # Adjust this for non-Windows paths (like Docker or Linux)
+
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -15,7 +20,7 @@ DB_CONFIG = {
     "dbname": os.getenv("DB_NAME", "postgres"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD", "postgres"),
-    "host": os.getenv("DB_HOST", "db"), 
+    "host": os.getenv("DB_HOST", "localhost"), 
     "port": os.getenv("DB_PORT", "5432")
 }
 
@@ -104,6 +109,24 @@ def delete_file(filename):
     
     # Reload the page after deletion
     return redirect('/')
+
+@app.route('/file-list')
+def file_list():
+    try:
+        if not os.path.exists(UPLOAD_FOLDER):
+            return jsonify({"error": "Upload folder not found", "files": []}), 404
+
+        files = []
+        for f in os.listdir(UPLOAD_FOLDER):
+            file_path = os.path.join(UPLOAD_FOLDER, f)
+            if os.path.isfile(file_path):  # Ensure it's a file, not a directory
+                files.append({"name": f, "size": os.path.getsize(file_path) // 1024})
+
+        return jsonify(files)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

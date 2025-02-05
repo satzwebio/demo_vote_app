@@ -18,6 +18,15 @@ kubectl apply -f namespace.yaml
 echo "Pausing for namespace to be created..."
 sleep 5
 
+# Create ServiceAccount
+echo "Creating ServiceAccount..."
+kubectl apply -f db-init-sa.yaml
+
+# Create Role and RoleBinding
+echo "Creating Role and RoleBinding..."
+kubectl apply -f db-init-role.yaml
+kubectl apply -f db-init-rolebinding.yaml
+
 # Apply Persistent Volume Claims (PVCs)
 kubectl apply -f pvc-block.yaml
 kubectl apply -f pvc-fs.yaml
@@ -42,4 +51,24 @@ kubectl apply -f db-init-job.yaml
 kubectl apply -f app-deployment.yaml
 kubectl apply -f app-service.yaml
 
+# Deploy Cron job file gen
+kubectl apply -f cronjob-filegen.yaml
+
 echo "All Kubernetes resources have been applied successfully!"
+
+# Query and print the status of all resources in the namespace
+echo -e "\nFetching all resources in namespace: $NAMESPACE\n"
+
+kubectl get all -n $NAMESPACE
+echo "\n"
+kubectl get secrets -n $NAMESPACE
+echo "\n"
+kubectl get configmaps -n $NAMESPACE
+echo "\n"
+kubectl get serviceaccounts -n $NAMESPACE
+echo "\n"
+kubectl get roles -n $NAMESPACE
+echo "\n"
+kubectl get rolebindings -n $NAMESPACE
+echo "\n"
+echo -e "Done!"

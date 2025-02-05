@@ -1,33 +1,53 @@
 /* General Layout */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
+  background-color: #2C2F38; /* Dark mode background */
+  color: #E0E0E0; /* Light gray text for better contrast */
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+
+/* Page Heading */
+.page-heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  color: #ffffff; /* White heading for better visibility */
 }
 
 /* Tab Navigation */
 .tab-container {
   display: flex;
+  justify-content: flex-start;
   margin-top: 20px;
 }
 
-.tab-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border: none;
+.tab-option {
+  padding: 8px 16px;
+  font-size: 1.1rem;
   cursor: pointer;
-  background-color: #6C757D;
-  margin: 5px;
-  border-radius: 5px;
+  background-color: #444444; /* Dark background for tabs */
+  border: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  margin: 0 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  height: 35px;
 }
 
-.tab-button.active {
-  background-color: #007BFF;
+.tab-option.active {
+  background-color: #6C757D;
   color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tab-option:hover {
+  background-color: #5a636c;
+  transform: translateY(-2px);
 }
 
 /* Hide inactive screens */
@@ -35,7 +55,7 @@ body {
   display: none;
   width: 80%;
   margin-top: 20px;
-  text-align: center;
+  text-align: left;
 }
 
 .screen.active {
@@ -50,28 +70,51 @@ table {
 }
 
 table th, table td {
-  padding: 12px;
+  padding: 8px 12px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 1px solid #444;
 }
 
 table th {
-  background-color: #007BFF;
+  background-color: #3a3a3a;
   color: white;
 }
 
 table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #2a2a2a;
 }
 
 table tr:hover {
-  background-color: #ddd;
+  background-color: #555;
+}
+
+table td.action-column {
+  width: 120px; /* Adjusted to match button width */
+  text-align: center; /* Center delete button */
+}
+
+table td:nth-child(2), table td:nth-child(3) {
+  width: 120px; /* Adjusted to match button width */
+}
+
+table td .delete-button {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  background-color: #DC3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+table td .delete-button:hover {
+  background-color: #C82333;
 }
 
 /* Add color Form */
 .add-color-form {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   margin-top: 20px;
 }
@@ -79,8 +122,8 @@ table tr:hover {
 .color-input {
   padding: 10px;
   font-size: 1rem;
-  width: 300px;
-  margin-bottom: 10px;
+  width: 150px;
+  margin-right: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -99,24 +142,13 @@ table tr:hover {
   background-color: #218838;
 }
 
-/* Delete Button */
-.delete-button {
-  padding: 5px 10px;
-  background-color: #DC3545;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  background-color: #C82333;
-}
-
 /* File Upload Section */
 #upload-section {
   width: 80%;
-  margin: 20px auto;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 #file-upload {
@@ -125,4 +157,11 @@ table tr:hover {
 
 .file-label {
   font-weight: bold;
+}
+
+/* File Table Title */
+.files-table-title {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  color: white; /* White title text */
 }
