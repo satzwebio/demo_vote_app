@@ -1,0 +1,12 @@
+apiVersion: apps.mydomain.com/v1alpha1
+kind: StorageApp
+metadata:
+  name: my-storage-app
+  namespace: my-demo-namespace
+spec:
+  deploymentName: my-existing-deployment
+  deploymentImage: myregistry.com/flask-app:v2
+  deploymentReplicas: 4
+  statefulSetName: my-existing-statefulset
+  statefulSetImage: myregistry.com/db-app:v2
+  statefulSetReplicas: 3

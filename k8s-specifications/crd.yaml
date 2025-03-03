@@ -1,0 +1,66 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: storageapps.apps.mydomain.com
+spec:
+  group: apps.mydomain.com
+  names:
+    kind: StorageApp
+    listKind: StorageAppList
+    plural: storageapps
+    singular: storageapp
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              properties:
+                deploymentName:
+                  type: string
+                  description: "Name of the existing Deployment to update"
+                deploymentImage:
+                  type: string
+                  description: "New image for Deployment"
+                deploymentReplicas:
+                  type: integer
+                  description: "Number of replicas for Deployment"
+                statefulSetName:
+                  type: string
+                  description: "Name of the existing StatefulSet to update"
+                statefulSetImage:
+                  type: string
+                  description: "New image for StatefulSet"
+                statefulSetReplicas:
+                  type: integer
+                  description: "Number of replicas for StatefulSet"
+            status:
+              type: object
+              properties:
+                deploymentReadyReplicas:
+                  type: integer
+                statefulSetReadyReplicas:
+                  type: integer
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: DeploymentImage
+          type: string
+          jsonPath: .spec.deploymentImage
+        - name: StatefulSetImage
+          type: string
+          jsonPath: .spec.statefulSetImage
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
