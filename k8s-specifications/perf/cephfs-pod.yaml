@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cephfs-pod
+spec:
+  volumes:
+    - name: cephfs-storage
+      persistentVolumeClaim:
+        claimName: <YOUR_CEPHFS_PVC_NAME>  # Replace with your CephFS PVC name
+  containers:
+    - name: cephfs-container
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - "dd if=/dev/zero of=/mnt/storage/testfile bs=1M count=50 && sleep 3600"
+      volumeMounts:
+        - mountPath: /mnt/storage
+          name: cephfs-storage

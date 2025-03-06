@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rbd-block-pod
+spec:
+  volumes:
+    - name: rbd-storage
+      persistentVolumeClaim:
+        claimName: <YOUR_RBD_PVC_NAME>  # Replace with your RBD PVC name
+  containers:
+    - name: rbd-container
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - "dd if=/dev/zero of=/mnt/storage/testfile bs=1M count=50 && sleep 3600"
+      volumeMounts:
+        - mountPath: /mnt/storage
+          name: rbd-storage

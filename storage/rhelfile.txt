@@ -4,13 +4,16 @@ FROM registry.access.redhat.com/ubi9/python-311:latest AS base
 # Set the working directory
 WORKDIR /usr/local/app
 
+USER 0
+
 # Install required system packages
-RUN microdnf install -y \
-    libpq-devel \
-    && microdnf clean all
+RUN dnf install -y \
+    libpq-devel python3-pip\
+    && dnf clean all
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
@@ -19,5 +22,7 @@ COPY . .
 # Expose port 80
 EXPOSE 80
 
+USER 1001
+
 # Command to run the app with Gunicorn
-CMD ["gunicorn", "--chdir", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
+CMD ["python3", "-m", "gunicorn", "--chdir", "storage", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
