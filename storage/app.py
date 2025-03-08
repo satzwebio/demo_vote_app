@@ -8,12 +8,18 @@ app = Flask(__name__, static_folder='static')
 # Define upload directory (dynamically use Git Bash or Windows path)
 if os.name == 'nt':  # Check if it's a Windows system
     UPLOAD_FOLDER = r"C:\Users\satzw\OneDrive\Desktop\example-voting-app\mnt-filesystem"
+    UPLOAD_FOLDER1 = r"C:\Users\satzw\OneDrive\Desktop\example-voting-app\mnt-filesystem1"
 else:
     UPLOAD_FOLDER = "/mnt/filesystem-pvc"  # Adjust this for non-Windows paths (like Docker or Linux)
+    UPLOAD_FOLDER1 = "/mnt/perf-pvc"
 
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER1, exist_ok=True)
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+
 
 # Database Configuration
 DB_CONFIG = {
@@ -127,6 +133,47 @@ def file_list():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def generate_files(size_gb):
+    num_files = 10  # Fixed to 10 files
+    file_size = (size_gb * 1024) // num_files  # Each file's size in MB
+
+    files_created = []
+    for i in range(1, num_files + 1):
+        file_path = os.path.join(UPLOAD_FOLDER1, f"file_{i}.bin")
+        try:
+            with open(file_path, "wb") as f:
+                f.truncate(file_size * 1024 * 1024)  # Creating file of the specified size
+            files_created.append(file_path)
+        except Exception as e:
+            return str(e)
+    
+    return files_created
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    try:
+        size_gb = int(request.form['size'])
+        if size_gb < 1 or size_gb > 50:
+            return jsonify({"error": "Please enter a number between 1 and 50"})
+
+        files_created = generate_files(size_gb)
+
+        return jsonify({"files": sorted(os.listdir(UPLOAD_FOLDER1))})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route('/file-list1', methods=['GET'])
+def file_list1():
+    try:
+        if not os.path.exists(UPLOAD_FOLDER1):
+            return jsonify({"error": "Upload folder not found", "files": []}), 404
+
+        files = sorted(os.listdir(UPLOAD_FOLDER1))  # Sort files by name
+        return jsonify(files)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)})        
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

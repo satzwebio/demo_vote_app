@@ -14,6 +14,7 @@
     <div class="tab-container">
         <div class="tab-option active" onclick="showScreen('color-screen')">Block Storage</div>
         <div class="tab-option" onclick="showScreen('files-screen')">File Storage (Files)</div>
+        <div class="tab-option" onclick="showScreen('files-gen')">File Generate (Files)</div>
     </div>
 
     <!-- Color Storage Screen -->
@@ -79,6 +80,62 @@
             </tbody>
         </table>
     </div>
+
+    <div id="files-gen" class="screen">
+        <h1 class="text-2xl font-bold mb-6">File Creation Simulator</h1>
+        <label for="sizeInput">Enter size (1-50 GB):</label>
+        <input type="number" id="sizeInput" min="1" max="50">
+        <button onclick="generateFiles()">Generate</button>
+    
+        <div id="fileList"></div>
+      
+</div>
+
+<script>
+    function generateFiles() {
+        let size = document.getElementById("sizeInput").value;
+
+        if (size < 1 || size > 50) {
+            alert("Please enter a number between 1 and 50.");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("size", size);
+
+        fetch("/generate", { method: "POST", body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    displayFiles(data.files);
+                }
+            });
+    }
+
+    function displayFiles(files) {
+        let fileListDiv = document.getElementById("fileList");
+        fileListDiv.innerHTML = "<h3>Generated Files:</h3>";
+        
+        let ul = document.createElement("ul");
+        files.forEach(file => {
+            let li = document.createElement("li");
+            li.textContent = file;
+            ul.appendChild(li);
+        });
+        fileListDiv.appendChild(ul);
+    }
+
+    function fetchFiles() {
+        fetch("/file-list")
+            .then(response => response.json())
+            .then(data => displayFiles(data));
+    }
+
+    window.onload = fetchFiles; // Load files on page load
+</script>
+
 
     <!-- Link to External JS File -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
