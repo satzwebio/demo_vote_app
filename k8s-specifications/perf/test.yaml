@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: write-access-pod
+spec:
+  securityContext:
+    runAsUser: 1001        # User ID to run the main container
+    fsGroup: 1001          # Group ID for file system access (needed for shared volumes)
+  initContainers:
+    - name: set-permissions
+      image: busybox:1.35.0-uclibc
+      command:
+        - "sh"
+        - "-c"
+        - "chown -R 1001:1001 /mnt/storage"   # Adjust permissions before container runs
+      volumeMounts:
+        - mountPath: /mnt/storage
+          name: storage-volume  # Mount path for PVC (if you're using a PVC)
+  containers:
+    - name: main-container
+      image: busybox:1.35.0-uclibc
+      command:
+        - "sh"
+        - "-c"
+        - "while true; do sleep 3600; done" # Keeps the pod alive for testing
+      volumeMounts:
+        - mountPath: /mnt/storage
+          name: storage-volume   # This is the PVC mount path for the main container
+  volumes:
+    - name: storage-volume
+      persistentVolumeClaim:
+        claimName: your-pvc-name   # Reference to your PVC
